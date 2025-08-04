@@ -1,0 +1,82 @@
+#!/bin/bash
+set -e
+
+# --- 這一段是為了讓腳本能找到自己的輔助檔案，無論從哪裡執行 ---
+# Homebrew 安裝後會設定這個環境變數，指向安裝目錄
+# 為了本地開發方便，如果變數不存在，就預設為腳本所在目錄的上一層
+GITENVI_HOME=${GITENVI_HOME:-"$(cd "$(dirname "$0")/.." && pwd)"}
+# -----------------------------------------------------------
+
+# 定義使用者設定檔的路徑
+CONFIG_FILE="$HOME/.config/gitenvi/config.json"
+
+# 主程式邏輯
+main() {
+    # 如果沒有任何指令，顯示幫助訊息
+    if [ $# -eq 0 ]; then
+        show_help
+        exit 0
+    fi
+
+    COMMAND="$1"
+    shift # 移掉第一個參數 (COMMAND)，剩下的就是指令的參數
+
+    case "$COMMAND" in
+        setup)
+            run_setup
+            ;;
+        aliases)
+            list_aliases
+            ;;
+        new)
+            new_project "$@"
+            ;;
+        clone)
+            clone_repo "$@"
+            ;;
+        *)
+            echo "錯誤: 未知的指令 '$COMMAND'"
+            show_help
+            exit 1
+            ;;
+    esac
+}
+
+# --- 功能函式 ---
+
+show_help() {
+    echo "gitenvi - Git 多帳號環境管理器"
+    echo ""
+    echo "使用方式:"
+    echo "  gitenvi setup         - 初始化設定（首次使用）"
+    echo "  gitenvi aliases       - 列出所有已設定的帳號別名"
+    echo "  gitenvi new <alias> <proj>"
+    echo "  gitenvi clone <alias> <user/repo>"
+}
+
+run_setup() {
+    echo "🚀 開始設定 gitenvi..."
+    local config_dir=$(dirname "$CONFIG_FILE")
+    local example_config_file="$GITENVI_HOME/config.example.json"
+
+    if [ -f "$CONFIG_FILE" ]; then
+        echo "✅ 設定檔 '$CONFIG_FILE' 已存在。"
+    else
+        echo "ℹ️ 設定檔不存在，正在為您建立..."
+        mkdir -p "$config_dir"
+        cp "$example_config_file" "$CONFIG_FILE"
+        echo "✅ 已從範本建立設定檔，請編輯 '$CONFIG_FILE' 並填入您的資訊。"
+    fi
+    echo ""
+    echo "下一步：請執行 gitenvi-generate-configs 來根據您的設定檔產生 SSH 和 Git 設定。"
+    echo "(此功能將在未來的版本中完善)"
+}
+
+# 暫時的 placeholder 函式
+list_aliases() { echo "功能開發中: 列出別名"; }
+new_project() { echo "功能開發中: 建立新專案"; }
+clone_repo() { echo "功能開發中: Clone 專案"; }
+
+
+# --- 執行主程式 ---
+main "$@"

@@ -1,0 +1,19 @@
+{
+  "project_base_path": "~/dev",
+  "accounts": [
+    {
+      "alias": "personal",
+      "github_user": "your-github-username",
+      "git_name": "Your Name",
+      "git_email": "personal@example.com",
+      "ssh_key_path": "~/.ssh/id_ed25519_personal"
+    },
+    {
+      "alias": "work",
+      "github_user": "your-work-username",
+      "git_name": "Your Name (Work)",
+      "git_email": "work@example.com",
+      "ssh_key_path": "~/.ssh/id_ed25519_work"
+    }
+  ]
+}
